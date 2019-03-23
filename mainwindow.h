@@ -30,6 +30,8 @@ private slots:
     void recieve_msg(const QString &msg);
     void recieve_err(const QString &msg);
     void deleting_finished();
+    void process_started();
+    void process_finised();
 
 signals:
     void start_scan(const QString &dir);

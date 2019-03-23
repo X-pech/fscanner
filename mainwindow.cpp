@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     setWindowTitle("Duplicate Files Scanner");
-    ui->progressBar->hide();
+    hide_progress_bar();
 
     // Type
     qRegisterMetaType<std::vector<std::vector<scanfile>>>("std::vector<std::vector<scanfile>>");
@@ -34,6 +34,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this, &MainWindow::delete_files_sc, scanner, &Scanner::delete_files);
     connect(scanner, &Scanner::deleting_finished, this, &MainWindow::deleting_finished);
     connect(this, &MainWindow::cancel_process, scanner, &Scanner::cancel, Qt::DirectConnection);
+    connect(scanner, &Scanner::process_started, this, &MainWindow::process_started);
+    connect(scanner, &Scanner::process_finished, this, &MainWindow::process_finised);
 
 
 
@@ -43,6 +45,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    emit cancel_process();
+    scanner_thread->quit();
+    scanner_thread->wait();
+    delete scanner_thread;
     delete ui;
 }
 
@@ -61,6 +67,14 @@ void MainWindow::hide_progress_bar() {
 void MainWindow::cancel_pushed() {
     hide_progress_bar();
     emit cancel_process(true);
+}
+
+void MainWindow::process_started() {
+    show_progress_bar();
+}
+
+void MainWindow::process_finised() {
+    hide_progress_bar();
 }
 
 void MainWindow::open_directory() {
@@ -110,7 +124,7 @@ void MainWindow::recieve_results(const std::vector<std::vector<scanfile>> &res) 
 }
 
 void MainWindow::recieve_amount(const qint32 &cnt) {
-    ui->progressBar->setMaximum(cnt);
+    ui->progressBar->setRange(0, cnt);
     if (cnt > 0) {
        ui->statusBar->showMessage("Processing... Files processed: " + QString::number(cnt));
     } else {

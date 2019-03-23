@@ -20,6 +20,7 @@ void Scanner::scan(const QString &dir) {
     find_dupes();
     emit send_results(dupes);
     emit new_message("Done");
+    emit process_finished();
 }
 
 void Scanner::clear_data() {
@@ -35,11 +36,12 @@ void Scanner::index_files() {
     qint32 result = 0;
     QDirIterator it(directory, QDirIterator::Subdirectories | QDirIterator::FollowSymlinks);
     QString path;
+    emit process_started();
     while (it.hasNext()) {
         path = it.next();
         try {
             QFileInfo info(path);
-            if (info.isFile()) {
+            if (info.isFile() && (info.permissions() & QFileDevice::ReadUser)) {
                 files.emplace_back(path, info.absoluteFilePath(), info.size());
                 result++;
             }
@@ -97,6 +99,7 @@ void Scanner::delete_files(const std::vector<std::pair<qint32, qint32>> &ids) {
     int index = 0;
     _canceled.store(false);
 
+    emit process_started();
     emit new_message("Started deleting");
     for (const std::pair<qint32, qint32> &id : ids) {
         if (_canceled.load()) {
@@ -114,6 +117,7 @@ void Scanner::delete_files(const std::vector<std::pair<qint32, qint32>> &ids) {
     progress_check(ids.size(), ids.size());
     emit new_message("Deleting is done");
     emit deleting_finished();
+    emit process_finished();
 }
 
 void Scanner::cancel(const bool &show_msg) {

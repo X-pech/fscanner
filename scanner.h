@@ -33,6 +33,8 @@ signals:
     void send_results(const std::vector<std::vector<scanfile>> &res);
     void update_progress_bar(qint32 value);
     void deleting_finished();
+    void process_started();
+    void process_finished();
 
 private:
     const int PROGRESS_SEND_INTERVAL = 5;
