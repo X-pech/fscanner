@@ -113,6 +113,7 @@ void Scanner::delete_files(const std::vector<std::pair<qint32, qint32>> &ids) {
     }
     progress_check(ids.size(), ids.size());
     emit new_message("Deleting is done");
+    emit deleting_finished();
 }
 
 void Scanner::cancel(const bool &show_msg) {

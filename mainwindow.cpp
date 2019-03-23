@@ -32,6 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(scanner, &Scanner::update_progress_bar, this, &MainWindow::update_progress_bar);
     connect(this, &MainWindow::start_scan, scanner, &Scanner::scan);
     connect(this, &MainWindow::delete_files_sc, scanner, &Scanner::delete_files);
+    connect(scanner, &Scanner::deleting_finished, this, &MainWindow::deleting_finished);
     connect(this, &MainWindow::cancel_process, scanner, &Scanner::cancel, Qt::DirectConnection);
 
 
@@ -101,7 +102,7 @@ void MainWindow::recieve_results(const std::vector<std::vector<scanfile>> &res) 
             group_item->setText(2, QString::number(group_size));
         }
     }
-    ui->statusBar->showMessage("Done");
+    ui->statusBar->showMessage("Done, time elapsed: " + QString::number(timer.elapsed() / 1000.0) + QString("sec."));
     setWindowTitle("Duplicate Files Scanner");
     ui->progressBar->setValue(0);
     ui->progressBar->setMaximum(0);
@@ -127,6 +128,10 @@ void MainWindow::recieve_err(const QString &msg) {
 
 void MainWindow::update_progress_bar(const qint32 &val) {
     ui->progressBar->setValue(val);
+}
+
+void MainWindow::deleting_finished() {
+    ui->statusBar->showMessage("Deleting finished, time: " + QString::number(timer.elapsed() / 1000.0) + " sec.");
 }
 
 void MainWindow::delete_files() {

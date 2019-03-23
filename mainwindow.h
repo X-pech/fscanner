@@ -29,6 +29,7 @@ private slots:
     void recieve_amount(const qint32 &cnt);
     void recieve_msg(const QString &msg);
     void recieve_err(const QString &msg);
+    void deleting_finished();
 
 signals:
     void start_scan(const QString &dir);

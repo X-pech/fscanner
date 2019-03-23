@@ -32,6 +32,7 @@ signals:
     void new_exception(const QString &msg);
     void send_results(const std::vector<std::vector<scanfile>> &res);
     void update_progress_bar(qint32 value);
+    void deleting_finished();
 
 private:
     const int PROGRESS_SEND_INTERVAL = 5;
