@@ -156,7 +156,7 @@ void MainWindow::delete_files() {
     qint32 cid = 0;
     QTreeWidgetItemIterator cur_group(it);
     bool active = false;
-    size_t group_actual_size;
+    size_t group_actual_size = 0;
     std::vector < QTreeWidgetItemIterator > to_delete;
     while (*it) {
         if ((*it)->text(0) == "Group") {
